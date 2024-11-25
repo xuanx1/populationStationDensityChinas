@@ -1,0 +1,28 @@
+{
+    "name": "default-template",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "dev": "vite",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@turf/along": "^7.1.0",
+        "@turf/turf": "^7.1.0",
+        "d3": "^7.9.0",
+        "d3-geo-projection": "^4.0.0",
+        "leaflet": "^1.9.4",
+        "leaflet-curve": "^1.0.0",
+        "leaflet-polylinedecorator": "^1.6.0",
+        "leaflet.heat": "^0.2.0",
+        "leaflet.markercluster": "^1.5.3",
+        "plotly.js-dist-min": "^2.35.2",
+        "proj4": "^2.14.0",
+        "venn.js": "github:benfred/venn.js",
+        "vite": "^5.4.2"
+    }
+}
