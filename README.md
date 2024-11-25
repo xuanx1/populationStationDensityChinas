@@ -15,6 +15,7 @@ https://xuanx1.github.io/populationStationDensityChinas/
 Features:
 
 -Hover gesture displaying province name and its number of train stations
+
 -Realtime highlighting of province area on the map
 
 ### Density of Stations Per Province
@@ -22,6 +23,7 @@ Features:
 Features:
 
 -Hover gesture displaying province name, its area and density of train stations per square mile
+
 -Realtime highlighting of province area on the map
 
 ### Per Capita of Stations in Each Province
@@ -29,4 +31,5 @@ Features:
 Features:
 
 -Hover gesture displaying province name and average number of people sharing a single train station
+
 -Realtime highlighting of province area on the map
