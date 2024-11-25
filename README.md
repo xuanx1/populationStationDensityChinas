@@ -13,14 +13,20 @@ https://xuanx1.github.io/populationStationDensityChinas/
 ### Number of Stations Per Province
 ![no stat](https://github.com/user-attachments/assets/1b4d61c2-1c52-451c-ba5a-df2361fb4a56)
 Features:
-Hover
+
+-Hover gesture displaying province name and its number of train stations
+-Realtime highlighting of province area on the map
 
 ### Density of Stations Per Province
 ![density](https://github.com/user-attachments/assets/3a50781c-84ab-46b4-ad41-ac596f0afce6)
 Features:
-Hover
+
+-Hover gesture displaying province name, its area and density of train stations per square mile
+-Realtime highlighting of province area on the map
 
 ### Per Capita of Stations in Each Province
 ![percap](https://github.com/user-attachments/assets/98ca7cc1-32cc-4b49-b37f-cac60842bbf7)
 Features:
-Hover
+
+-Hover gesture displaying province name and average number of people sharing a single train station
+-Realtime highlighting of province area on the map
