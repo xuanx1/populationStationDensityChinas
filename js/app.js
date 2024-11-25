@@ -633,7 +633,7 @@ async function fetchDataStationsByProvince() {
         // Highlight province on the map
         const provinceName = d.province;
         if (provinceName === "Taiwan" && d.count === 664) {
-          const taiwanOutline = await d3.json("data/tw lvl1.geoJSON");
+          const taiwanOutline = await d3.json("https://github.com/xuanx1/populationStationDensityChinas/blob/5cb8f0ddf55f8156210057baefe2a631775d7029/data/tw%20lvl1.geojson");
           const taiwanLayer = L.geoJSON(taiwanOutline, {
             style: {
               color: "#ffeebc",
