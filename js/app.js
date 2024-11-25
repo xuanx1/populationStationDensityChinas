@@ -1,9 +1,9 @@
-import * as d3 from "d3";
-import "leaflet";
-import * as venn from "venn.js";
-import 'leaflet.markercluster';
-import "leaflet/dist/leaflet.css";
-import "leaflet.heat";
+// import * as d3 from "d3";
+// import "leaflet";
+// import * as venn from "venn.js";
+// import 'leaflet.markercluster';
+// import "leaflet/dist/leaflet.css";
+// import "leaflet.heat";
 
 //retrieve data & create viz - Heatmap, tree map, venn diagram, thematic map
 //station name - features.name:en + features.name (from points)
