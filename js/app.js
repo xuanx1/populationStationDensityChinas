@@ -340,7 +340,7 @@ const toggleHeatMapButton = L.control({ position: "bottomleft" });
 
 toggleHeatMapButton.onAdd = function () {
   const div = L.DomUtil.create("div", "info toggle-heatmap-button");
-  div.innerHTML = '<button id="toggleHeatMap" style="background: rgba(1, 156, 222, 0.2); border: 1px solid #4181f2; cursor: pointer; border-radius: 2px; padding-top: 5px; margin-left: -2px;"><img src="https://github.com/xuanx1/populationStationDensityChinas/blob/5257630eea746030d5c39f07a920ebe43313c5ee/images/heatmap.svg" alt="Heat Map" style="width: 18px; height: 19px; filter: invert(38%) sepia(100%) saturate(1000%) hue-rotate(200deg) brightness(100%) contrast(400%);"></button>';
+  div.innerHTML = '<button id="toggleHeatMap" style="background: rgba(1, 156, 222, 0.2); border: 1px solid #4181f2; cursor: pointer; border-radius: 2px; padding-top: 5px; margin-left: -2px;"><img src="/populationStationDensityChinas/images/heatmap.svg" alt="Heat Map" style="width: 18px; height: 19px; filter: invert(38%) sepia(100%) saturate(1000%) hue-rotate(200deg) brightness(100%) contrast(400%);"></button>';
   return div;
 };
 
