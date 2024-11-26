@@ -1,6 +1,8 @@
 # Population-Station Density in the Two Chinas
 https://xuanx1.github.io/populationStationDensityChinas/
 
+In this visualisation, the goal will be to get key insights into transport accessibility and infrastructure coverage in the two Chinas and spot regions or provinces that falls short of accessibility to inter-region transport.
+
 ## Dashboard
 ![preview_final](https://github.com/user-attachments/assets/8d72d191-9a08-4235-a6b2-7a4de2cbbb73)
 
