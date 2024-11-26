@@ -38,6 +38,6 @@ Features:
 
 -2D Scatterplot
 
--Hover gesture displaying province name and average number of people sharing a single train station
+-Hover gesture displaying province name and average number of people "sharing" a single train station
 
 -Realtime highlighting of province area on the map
