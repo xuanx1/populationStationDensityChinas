@@ -1,7 +1,9 @@
-# Population-Station Density in the Two Chinas
-https://xuanx1.github.io/populationStationDensityChinas/
+# [Population-Station Density](https://xuanx1.github.io/populationStationDensityChinas/) in the Two Chinas
 
 Three quarter of the world’s High Speed Rail(HSR) tracks are located in China, in line with its "8 Vertical, 8 Horizontal" infrastructure planning strategy, cities with population of over 500,000 will have a HSR station by 2035. In this visualisation, the goal will be to get key insights into transport accessibility and infrastructure coverage in the two Chinas and spot regions or provinces that falls short of accessibility to inter-region transport.
+
+## UI Refresh
+<img width="1918" height="918" alt="Screenshot 2026-05-17 165008" src="https://github.com/user-attachments/assets/4033da39-ffda-4323-bbd4-aa704b7685cc" />
 
 ## Dashboard
 ![preview_final](https://github.com/user-attachments/assets/8d72d191-9a08-4235-a6b2-7a4de2cbbb73)
