@@ -1,32 +1,606 @@
+/* Editorial — NYT Pudding–style visualization */
+
+* { box-sizing: border-box; }
+
 :root {
-    --background: 255, 6%, 5%;
-    --foreground: 255, 6%, 98%;
+    --ink: #1a1a1a;
+    --ink-soft: #444;
+    --ink-mute: #888;
+    --rule: #e5e5e5;
+    --rule-strong: #cfcfcf;
+    --paper: #fbfaf7;
+    --paper-warm: #f4f1ea;
+    --accent: #c8102e;
+
+    --serif: 'Source Serif 4', 'Source Serif Pro', 'Times New Roman', Georgia, serif;
+    --sans: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+    /* Self-hosted Noto Serif SC first (see fonts/fonts.css); system fonts
+       follow as fallback if the WOFF2 hasn't loaded yet. */
+    --hanzi: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong',
+             'SimSun', 'PingFang SC', 'Microsoft YaHei', serif;
 }
 
-body {
-    font-family: "Inter", sans-serif;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+html, body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 #map {
-    height: 500px;
-}
-
-.leaflet-tile-container img {
-    width: 256.5px !important;
-    height: 256.5px !important;
+    height: 100%;
+    background: var(--paper);
 }
 
 .leaflet-container {
-    background: transparent;
+    background: var(--paper);
+    font-family: var(--serif);
 }
 
-.leaflet-popup-content {
-    font-size: 1rem;
-    font-weight: 800;
+/* Every Leaflet corner sits 20 px from the screen edge — matches the figure panels.
+   Default Leaflet uses 0 with a 10 px per-control margin, which made the left-side
+   controls visibly closer to the edge than the figs on the right. */
+.leaflet-control-container .leaflet-top    { top: 20px; }
+.leaflet-control-container .leaflet-left   { left: 20px; }
+.leaflet-control-container .leaflet-bottom { bottom: 20px; }
+.leaflet-control-container .leaflet-right  { right: 20px; }
+
+/* Controls stack with a single consistent vertical gutter, no side margins. */
+.leaflet-top .leaflet-control,
+.leaflet-bottom .leaflet-control {
+    margin: 0 0 14px 0;
+}
+.leaflet-top .leaflet-control:last-child,
+.leaflet-bottom .leaflet-control:last-child {
+    margin-bottom: 0;
 }
 
-.tns-icon-marker {
-    border-radius: 999px;
+.leaflet-control-attribution {
+    background: rgba(251, 250, 247, 0.9) !important;
+    color: var(--ink-mute) !important;
+    font-family: var(--sans) !important;
+    font-size: 10px !important;
+    letter-spacing: 0.05em !important;
+    border: 1px solid var(--rule);
+    border-radius: 0 !important;
+    padding: 3px 8px !important;
+}
+
+.leaflet-control-attribution a {
+    color: var(--ink-soft) !important;
+}
+
+/* ── Masthead ────────────────────────────────────────────── */
+.editorial-title {
+    color: var(--ink);
+    padding: 6px 0 0;
+    text-shadow: none !important;
+    max-width: 860px;
+}
+
+/* Keep the hanzi gloss on the same line as the English run it follows. */
+.editorial-title h1 .hanzi {
+    white-space: nowrap;
+}
+
+.editorial-title .kicker {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 14px;
+    display: block;
+}
+
+.editorial-title h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(34px, 4vw, 54px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: var(--ink);
+}
+
+.editorial-title h1 .accent {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 600;
+}
+
+/* Italic doesn't work on CJK glyphs (it just slants them awkwardly) — keep
+   the red colour and weight emphasis, but render upright. */
+.editorial-title h1 .hanzi .accent {
+    font-style: normal;
+}
+
+.editorial-title .standfirst {
+    margin-top: 14px;
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    max-width: 520px;
+    font-weight: 400;
+}
+
+.editorial-title .hanzi {
+    font-family: var(--hanzi);
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0;
+}
+
+.editorial-title .kicker .hanzi,
+.loading-kicker .hanzi {
+    font-family: var(--hanzi);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    color: var(--ink-soft);
+    margin-left: 6px;
+}
+
+/* ── Byline ──────────────────────────────────────────────── */
+.editorial-attribution {
+    background: rgba(251, 250, 247, 0.9) !important;
+    border-top: 2px solid var(--ink);
+    padding: 8px 12px 6px !important;
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+}
+
+.editorial-attribution strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* ── Combined toggle + legend control ────────────────────── */
+.combined-control {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    background: rgba(251, 250, 247, 0.95);
+    border: 1px solid var(--rule);
+    padding: 6px 12px 6px 6px;
+}
+
+.combined-control .editorial-toggle {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 6px 12px !important;
+    border: 1px solid var(--ink) !important;
+}
+
+/* Discrete colour-dot legend rows */
+.legend-dots {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    flex: 0 0 auto;
+}
+
+.legend-row .legend-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-left: 8px;
+}
+
+/* ── Editorial panels ────────────────────────────────────── */
+.editorial-panel {
+    background: var(--paper) !important;
+    border: 1px solid var(--rule) !important;
+    border-top: 2px solid var(--ink) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    /* Becomes the positioning context for tooltip children — otherwise the
+       tooltip's `position: absolute` would resolve against #right-column
+       (the nearest positioned ancestor) and render at the wrong panel. */
+    position: relative;
+}
+
+/* Responsive scaling — figures shrink uniformly on narrow OR short viewports
+   so the right column (~1060 px stacked) never overflows.
+     - panel-scale-w: 55% at ~960 px wide, 100% at ~1600+ px wide
+     - panel-scale-h: 55% at ~640 px tall, 100% at ~1140+ px tall
+   The min() picks the tighter dimension. */
+:root {
+    --panel-scale-w: clamp(0.55, calc((100vw - 200px) / 1400), 1);
+    --panel-scale-h: clamp(0.55, calc((100vh -  80px) /  880), 1);
+    --panel-scale: min(var(--panel-scale-w), var(--panel-scale-h));
+}
+
+#right-column {
+    transform: scale(var(--panel-scale));
+    transform-origin: top right;
+}
+
+#leaderboard {
+    transform: scale(var(--panel-scale));
+    transform-origin: top left;
+}
+
+.editorial-panel .panel-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    fill: var(--ink-mute);
+}
+
+.editorial-panel .panel-kicker {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    fill: var(--ink-mute);
+}
+
+.editorial-panel .panel-title {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.015em;
+    fill: var(--ink);
+}
+
+/* ── Leaderboard + chart panels: shared flex-column layout ─ */
+#leaderboard,
+#treemap,
+#scatterplot {
+    padding: 14px 16px 17px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#treemap .panel-chart,
+#scatterplot .panel-chart {
+    flex: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+
+.leaderboard-header {
+    margin-bottom: 12px;
+}
+
+.leaderboard-headrow {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.panel-num-html {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+}
+
+.panel-kicker-html {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+}
+
+.panel-kicker-html .hanzi {
+    font-family: var(--hanzi);
+    margin-left: 6px;
+    text-transform: none;
+    letter-spacing: 0.05em;
+}
+
+.panel-title-html {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+}
+
+.leaderboard-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+.leaderboard-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 26px 22px 1fr auto;
+    align-items: center;
+    column-gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    transition: background 120ms ease;
+}
+
+.leaderboard-row:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-row:hover {
+    background: var(--paper-warm);
+}
+
+.lb-rank {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.05em;
+}
+
+.lb-hanzi {
+    font-family: var(--hanzi);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+    text-align: center;
+}
+
+.lb-name {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.lb-name .cn {
+    font-family: var(--hanzi);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--ink-mute);
+    letter-spacing: 0;
+    margin-left: 6px;
+}
+
+.lb-value {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: right;
+    z-index: 1;
+}
+
+.lb-bar {
+    position: absolute;
+    left: 56px;
+    bottom: 0;
+    height: 2px;
+    background: var(--ink);
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.leaderboard-row:hover .lb-bar {
+    background: #ffb000;
+    opacity: 1;
+}
+
+/* Region list — uses the SAME row styles as the leaderboard. Panel height is
+   sized in JS to fit the 8 regions + header at natural type sizes.
+   Hanzi column is wider here because some regions use two characters
+   (东北 / 西南 / 西北) that would otherwise wrap to a second line.
+   Rows are flex children so they grow evenly to fill the list area — that
+   way the LAST row's bottom sits at the same 9 px clearance from the panel
+   border as Fig 02's chart and Fig 03's axis line. */
+#regions {
+    padding: 14px 16px 17px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.region-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.region-list .leaderboard-row {
+    grid-template-columns: 26px 44px 1fr auto;
+    flex: 1 1 0;
+}
+.region-list .lb-hanzi {
+    white-space: nowrap;
+}
+
+/* ── Tooltips — solid ink, no chrome ─────────────────────── */
+.editorial-tooltip {
+    position: absolute;
+    background: var(--ink) !important;
+    color: #fff !important;
+    padding: 10px 14px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    pointer-events: none;
+    font-family: var(--sans) !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+    max-width: 240px;
+    z-index: 1100;
+}
+
+.editorial-tooltip .label {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 4px;
+}
+
+.editorial-tooltip .label:first-child {
+    margin-top: 0;
+}
+
+.editorial-tooltip .value {
+    display: block;
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.005em;
+    margin-top: 1px;
+}
+.editorial-tooltip .value .cn {
+    font-family: var(--hanzi);
+    font-weight: 500;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 4px;
+}
+
+.editorial-tooltip .value.cn {
+    font-family: var(--hanzi);
+}
+
+.editorial-tooltip .value.accent {
+    color: #ff7d8f;
+}
+
+/* ── Toggle button ──────────────────────────────────────── */
+.editorial-toggle {
+    background: #fff !important;
+    border: 1px solid var(--ink) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    padding: 8px 14px !important;
+    margin-left: 0 !important;
+    font-family: var(--sans);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition: all 180ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editorial-toggle:hover {
+    background: var(--ink);
+    color: #fff;
+}
+
+.editorial-toggle.off {
+    background: var(--paper-warm);
+    color: var(--ink-mute);
+}
+
+/* ── Axis & grid ─────────────────────────────────────────── */
+.editorial-panel .grid line {
+    stroke: var(--rule) !important;
+    stroke-opacity: 1 !important;
+}
+
+.editorial-panel .grid path {
+    stroke-width: 0;
+}
+
+.editorial-panel .domain {
+    stroke: var(--ink) !important;
+}
+
+/* ── Loading screen ─────────────────────────────────────── */
+.loading-screen {
+    background: var(--paper) !important;
+}
+
+.loading-screen .loading-kicker {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 18px;
+}
+
+.loading-screen .loading-headline {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--ink);
+    text-align: center;
+}
+
+.loading-screen .loading-headline .accent {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 600;
+}
+
+.loading-screen .loading-rule {
+    width: 220px;
+    height: 1px;
+    background: var(--rule);
+    margin: 26px auto 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-screen .loading-rule::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -60px;
+    width: 60px;
+    height: 3px;
+    background: var(--accent);
+    animation: ink-wipe 1.6s infinite ease-in-out;
+}
+
+@keyframes ink-wipe {
+    0%   { left: -60px; }
+    100% { left: 220px; }
 }
